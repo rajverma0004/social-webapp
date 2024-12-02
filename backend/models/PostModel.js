@@ -5,6 +5,7 @@ const userSchema = new Schema({
     caption: { type: String, unique: true },
     image: { type: String, default: 'unknown' },
     community: { type: String, },
+    likes: { type: Number, default: 0 },
     uploadedBy: String,
     createdAt: { type: Date, default: Date.now }
 });

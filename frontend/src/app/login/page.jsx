@@ -1,12 +1,13 @@
 'use client';
 import axios from 'axios';
 import { useFormik } from 'formik';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React from 'react'
 import toast from 'react-hot-toast';
 
-const Login = () => {
 
+const Login = () => {
     const router = useRouter();
 
     const loginForm = useFormik({
@@ -20,6 +21,7 @@ const Login = () => {
             axios.post('http://localhost:5000/user/authenticate', values)
                 .then((response) => {
                     toast.success('User Logedin Successfully');
+                    localStorage.setItem('token', response.data.token);
                     router.push('/add-post');
                 }).catch((err) => {
                     console.log(err);
@@ -31,9 +33,9 @@ const Login = () => {
     })
 
     return (
-        <div>
-            <div className='max-w-lg rounded-lg border shadow mx-auto mt-5 py-6 px-5'>
-                <h3 className='text-2xl text-center font-bold'>Login Form</h3>
+        <div className='bg-cover pt-10 min-h-screen' style={{backgroundImage: `url('https://www.searchenginejournal.com/wp-content/uploads/2021/08/top-5-reasons-why-you-need-a-social-media-manager-616015983b3ba-sej-1280x720.png')`}}>
+            <div className='max-w-md rounded-lg border shadow mx-auto mt-5 py-6 px-5 bg-white'>
+                <h3 className='text-2xl my-6 text-center font-bold'>Login Form</h3>
 
                 <form onSubmit={loginForm.handleSubmit}>
 
@@ -57,6 +59,8 @@ const Login = () => {
                             className='w-full border border-gray-400 rounded-lg px-3 py-2 mt-1 text-black'
                         />
                     </div>
+
+                    <Link href="/signup" className='text-violet-500'>Not Registered Yet? Register Here</Link>
 
                     <button type='submit' className='mt-5 bg-violet-500 p-3 w-full text-white rounded-lg'>Submit</button>
 

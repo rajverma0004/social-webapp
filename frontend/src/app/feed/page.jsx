@@ -1,38 +1,50 @@
 'use client';
+import { IconShare3, IconThumbUp } from '@tabler/icons-react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
-const Post = ({ post }) => (
-  <div className="bg-white shadow rounded-lg mb-6">
-    {/* Post Header */}
-    <div className="flex items-center p-4">
-      <p>Posted By : </p>
-      <span className="font-semibold">{post.uploadedBy}</span>
-    </div>
+const Post = ({ post, refresh }) => {
 
-    <div className='p-4'>
-      <h3 className='text-lg text-gray-600'>{post.community}</h3>
-    </div>
+  const addLike = async (id) => {
+    await axios.put('http://localhost:5000/post/update/' + id, { likes: post.likes + 1 });
+    refresh();
+  }
 
-    <div className='p-4'>
-      <h2 className='text-xl font-bold'>{post.title}</h2>
-    </div>
+  return <>
 
-    {/* Post Image */}
-    <img src={post.image} alt={post.caption} className="w-full" />
+    <div className="mb-4 group flex flex-col h-full bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+      <div className="flex flex-col justify-center items-center bg-blue-600 rounded-t-xl">
 
-    {/* Post Content */}
-    <div className="p-4">
-      <div className="flex items-center justify-between mb-2">
-        <span className="font-semibold">{post.likes} likes</span>
-        <button className="text-blue-500">Like</button>
+        <img src={post.image} alt={post.caption} className="w-full object-cover rounded-t-xl" />
       </div>
-      <p>
-        <span className="font-semibold">{post.user}</span> {post.caption}
-      </p>
+      <div className="p-4 md:p-6">
+        <span className="block mb-1 text-xs font-semibold text-blue-600 dark:text-blue-500">
+          {post.uploadedBy}
+        </span>
+        <h3 className="text-xl font-semibold text-gray-800 dark:text-neutral-300 dark:hover:text-white">
+          {post.title}
+        </h3>
+        <p className="mt-3 text-gray-500 dark:text-neutral-500">
+          {post.caption}
+        </p>
+      </div>
+      <div className="mt-auto flex border-t border-gray-200 divide-x divide-gray-200 dark:border-neutral-700 dark:divide-neutral-700">
+        <button
+          onClick={() => addLike(post._id)}
+          className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-es-xl bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+
+        >
+          <IconThumbUp /> Like ({post.likes})
+        </button>
+        <button
+          className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-ee-xl bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+        >
+          <IconShare3 /> Share
+        </button>
+      </div>
     </div>
-  </div>
-);
+  </>
+};
 
 function Feed() {
 
@@ -67,7 +79,7 @@ function Feed() {
       setPostList([]);
       return;
     }
-    
+
     setPostList(
       masterList.filter(post => (
         post.community === selCommunity
@@ -92,8 +104,11 @@ function Feed() {
         </select>
 
         {postList.map((post) => (
-          <Post key={post.id} post={post} />
+          <Post key={post.id} post={post} refresh={fetchPosts} />
         ))}
+
+
+
       </main>
     </div>
   );
